@@ -62,6 +62,7 @@ class DatabaseEntriesRepository implements Contract, ClearableRepository, Prunab
             $entry->type,
             $entry->family_hash,
             $entry->content,
+            $this->getHostnameColor($entry->content),
             $entry->created_at,
             $tags
         );
@@ -81,8 +82,6 @@ class DatabaseEntriesRepository implements Contract, ClearableRepository, Prunab
             ->take($options->limit)
             ->orderByDesc('sequence')
             ->get()->map(function ($entry) {
-                $hostnameColor = substr(md5($entry->content['headers']['host']), -6);
-
                 return new EntryResult(
                     $entry->uuid,
                     $entry->sequence,
@@ -90,11 +89,26 @@ class DatabaseEntriesRepository implements Contract, ClearableRepository, Prunab
                     $entry->type,
                     $entry->family_hash,
                     $entry->content,
-                    $hostnameColor,
+                    $this->getHostnameColor($entry->content),
                     $entry->created_at,
                     []
                 );
             });
+    }
+
+    /**
+     * Get the hostname color based on the hostname's md5 value.
+     *
+     * @param array $content
+     * @return string
+     */
+    private function getHostnameColor(array $content)
+    {
+        if (! empty($content['headers']['host'])) {
+            return substr(md5($content['headers']['host']), -6);
+        }
+
+        return "000000";
     }
 
     /**

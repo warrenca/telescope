@@ -79,6 +79,7 @@ class EntryResult implements JsonSerializable
      * @param  string  $type
      * @param  string|null  $familyHash
      * @param  array  $content
+     * @param  string $hostnameColor
      * @param  \Carbon\Carbon  $createdAt
      * @param  array  $tags
      */
